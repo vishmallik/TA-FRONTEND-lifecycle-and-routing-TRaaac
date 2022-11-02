@@ -35,25 +35,26 @@
             constructor(props) {
                 super(props)
                 this.state = {
-                    data: null
-                }
-                this.userData = {
-                    para: "My name is",
+                    data: null,
+                    para: "",
                     info: ""
                 }
+
             }
             componentDidMount() {
                 fetch("https://randomuser.me/api/").then((res) => res.json()).then((data) => {
-                    console.log(this)
+                    console.log(data.results[0].name.first)
                     this.setState({
-                        data: data.results[0]
+                        data: data.results[0],
+                        info: data.results[0].name.first + " " + data.results[0].name.last,
+                        para: "My name is"
                     })
                 })
 
             }
             handleMouseOver = (event) => {
                 let { id } = event.target;
-                let { para, info } = this.userData;
+                let { para, info } = this.state;
                 let result = this.state.data[id];
                 switch (id) {
                     case "name":
@@ -64,41 +65,60 @@
                         para = "My email is";
                         info = result
                         break;
+                    case "dob":
+                        para = "My age is";
+                        info = result.age
+                        break;
+                    case "location":
+                        para = "My street is";
+                        info = result.street.number + ", " + result.street.name
+                        break;
+                    case "phone":
+                        para = "My phone is";
+                        info = result
+                        break;
+                    case "login":
+                        para = "My password is";
+                        info = result.password
+                        break;
                 }
-                this.render()
-                console.log(info)
+
+                this.setState({
+                    para, info
+                })
             }
             render() {
-                let { data } = this.state
-                if (data) {
-                    return (<div className="container" >
-                        <div>
-                            <div className="card">
+                let { data, para, info } = this.state
 
-                                <div>
-                                    <img src={data.picture.large} alt="" />
-                                </div>
+                return (<div className="container" >
+                    <div>
+                        <div className="card">
 
-                                <div>
-                                    <p>{this.userData.para}</p>
-                                    <h2>{this.userData.info}</h2>
-                                    <ul className="flex">
-                                        <li><i className="fa-solid fa-user" id="name" onMouseOver={this.handleMouseOver} /></li>
-                                        <li><i className="fa-solid fa-envelope-open" id="email" onMouseOver={this.handleMouseOver} /></li>
-                                        <li><i className="fa-sharp fa-solid fa-calendar-xmark" id="dob" onMouseOver={this.handleMouseOver} /></li>
-                                        <li><i className="fa-solid fa-map" id="location" onMouseOver={this.handleMouseOver} /></li>
-                                        <li><i className="fa-solid fa-phone-flip" id="phone" onMouseOver={this.handleMouseOver} /></li>
-                                        <li><i className="fa-solid fa-lock" id="login" onMouseOver={this.handleMouseOver} /></li>
-                                    </ul>
-                                    <button onClick={this.componentDidMount.bind(this)}>Random User</button>
-                                </div>
+                            <div>
+                                <img src={data && data.picture.large} alt="" />
+                            </div>
+
+                            <div>
+                                <p>{para}</p>
+                                <h2>{info}</h2>
+                                <ul className="flex">
+                                    <li><i className="fa-solid fa-user" id="name" onMouseOver={this.handleMouseOver} /></li>
+                                    <li><i className="fa-solid fa-envelope-open" id="email" onMouseOver={this.handleMouseOver} /></li>
+                                    <li><i className="fa-sharp fa-solid fa-calendar-xmark" id="dob" onMouseOver={this.handleMouseOver} /></li>
+                                    <li><i className="fa-solid fa-map" id="location" onMouseOver={this.handleMouseOver} /></li>
+                                    <li><i className="fa-solid fa-phone-flip" id="phone" onMouseOver={this.handleMouseOver} /></li>
+                                    <li><i className="fa-solid fa-lock" id="login" onMouseOver={this.handleMouseOver} /></li>
+                                </ul>
+                                {data ? <button onClick={this.componentDidMount.bind(this)}>Random User</button> : <button >Loading...</button>}
+
                             </div>
                         </div>
-                        <div></div>
                     </div>
+                    <div></div>
+                </div>
+                )
 
-                    )
-                }
+
             }
 
         }
