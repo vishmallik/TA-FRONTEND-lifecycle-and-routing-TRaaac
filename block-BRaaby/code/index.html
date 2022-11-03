@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/6ff1e80dcd.js" crossorigin="anonymous"></script>
+    <!-- Noto Sans Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <title>title</title>
+</head>
+
+<body>
+    <header>
+
+    </header>
+    <main>
+        <div id="root"></div>
+    </main>
+    <footer>
+
+    </footer>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Your custom script here -->
+    <script type="text/babel">
+        class App extends React.Component {
+            constructor(props) {
+                super(props)
+                this.state = {
+                    data: null,
+                    para: "",
+                    info: ""
+                }
+
+            }
+            componentDidMount() {
+                fetch("https://randomuser.me/api/").then((res) => res.json()).then((data) => {
+                    console.log(data.results[0].name.first)
+                    this.setState({
+                        data: data.results[0],
+                        info: data.results[0].name.first + " " + data.results[0].name.last,
+                        para: "My name is"
+                    })
+                })
+
+            }
+            handleMouseOver = (event) => {
+                let { id } = event.target;
+                let { para, info } = this.state;
+                let result = this.state.data[id];
+                switch (id) {
+                    case "name":
+                        para = "My name is";
+                        info = result.first + " " + result.last
+                        break;
+                    case "email":
+                        para = "My email is";
+                        info = result
+                        break;
+                    case "dob":
+                        para = "My age is";
+                        info = result.age
+                        break;
+                    case "location":
+                        para = "My street is";
+                        info = result.street.number + ", " + result.street.name
+                        break;
+                    case "phone":
+                        para = "My phone is";
+                        info = result
+                        break;
+                    case "login":
+                        para = "My password is";
+                        info = result.password
+                        break;
+                }
+
+                this.setState({
+                    para, info
+                })
+            }
+            render() {
+                let { data, para, info } = this.state
+
+                return (<div className="container" >
+                    <div>
+                        <div className="card">
+
+                            <div>
+                                <img src={data && data.picture.large} alt="" />
+                            </div>
+
+                            <div>
+                                <p>{para}</p>
+                                <h2>{info}</h2>
+                                <ul className="flex">
+                                    <li><i className="fa-solid fa-user" id="name" onMouseOver={this.handleMouseOver} /></li>
+                                    <li><i className="fa-solid fa-envelope-open" id="email" onMouseOver={this.handleMouseOver} /></li>
+                                    <li><i className="fa-sharp fa-solid fa-calendar-xmark" id="dob" onMouseOver={this.handleMouseOver} /></li>
+                                    <li><i className="fa-solid fa-map" id="location" onMouseOver={this.handleMouseOver} /></li>
+                                    <li><i className="fa-solid fa-phone-flip" id="phone" onMouseOver={this.handleMouseOver} /></li>
+                                    <li><i className="fa-solid fa-lock" id="login" onMouseOver={this.handleMouseOver} /></li>
+                                </ul>
+                                {data ? <button onClick={this.componentDidMount.bind(this)}>Random User</button> : <button >Loading...</button>}
+
+                            </div>
+                        </div>
+                    </div>
+                    <div></div>
+                </div>
+                )
+
+
+            }
+
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'))
+        root.render(<App />)
+    </script>
+</body>
+
+</html>
